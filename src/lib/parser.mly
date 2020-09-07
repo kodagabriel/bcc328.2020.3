@@ -77,12 +77,12 @@ exp:
 | l=exp AND r=exp                                {$loc, BinaryExp (l, And, r)}
 | l=exp OR r=exp                                 {$loc, BinaryExp (l, Or, r)}
 | IF t=exp THEN b=exp option(ELSE) v=option(exp) {$loc, IfExp (t,b,v)}
-| WHILE t=exp DO b=exp                    {$loc, WhileExp (t, b)}
-| BREAK                                   {$loc, BreakExp}
-| f=ID LPAREN p=exp_list RPAREN			      {$loc, CallExp (f, p)} 
-| LPAREN es=exp_seq RPAREN                {$loc, ExpSeq es}
-| x=var                                   {$loc, VarExp x}
-| LET d=list(dec) IN e=exp                {$loc, LetExp (d, e)}
+| WHILE t=exp DO b=exp                           {$loc, WhileExp (t, b)}
+| BREAK                                          {$loc, BreakExp}
+| f=ID LPAREN p=exp_list RPAREN			             {$loc, CallExp (f, p)} 
+| LPAREN es=exp_seq RPAREN                       {$loc, ExpSeq es}
+| x=var                                          {$loc, VarExp x}
+| LET d=list(dec) IN e=exp                       {$loc, LetExp (d, e)}
 
 (* semicolon separted sequence of expressions *)
 exp_seq:
