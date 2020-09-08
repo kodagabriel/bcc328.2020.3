@@ -9,8 +9,8 @@ type exp =
   | RealExp       of float
   | NegativeExp   of lexp
   | BinaryExp     of (lexp * binary_op * lexp)
-  | IfExp     of (lexp * lexp * lexp option)
-  | WhileExp  of (lexp * lexp)
+  | IfExp         of (lexp * lexp * lexp option)
+  | WhileExp      of (lexp * lexp)
   | BreakExp
   | ExpSeq        of lexp list
   | CallExp       of symbol * lexp list
