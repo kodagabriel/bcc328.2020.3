@@ -76,7 +76,7 @@ exp:
 | l=exp LE r=exp                          {$loc, BinaryExp (l, LowerEqual, r)}
 | l=exp AND r=exp                         {$loc, BinaryExp (l, And, r)}
 | l=exp OR r=exp                          {$loc, BinaryExp (l, Or, r)}
-| IF t=exp THEN b=exp ELSE v=option(exp) {$loc, IfExp (t,b,v)}
+| IF t=exp THEN b=exp option(ELSE) v=option(exp) {$loc, IfExp (t,b,v)}
 | WHILE t=exp DO b=exp                    {$loc, WhileExp (t, b)}
 | BREAK                                   {$loc, BreakExp}
 | f=ID LPAREN p=exp_list RPAREN			      {$loc, CallExp (f, p)} 

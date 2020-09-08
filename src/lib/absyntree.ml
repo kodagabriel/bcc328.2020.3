@@ -53,7 +53,7 @@ let rec tree_of_exp exp =
   | RealExp x                 -> mktr (sprintf "RealExp %f" x) []
   | NegativeExp e             -> mktr "NegativeExp" [tree_of_lexp e]
   | BinaryExp (l, op, r)      -> mktr (sprintf "BinaryOp %s" (stringfy_op op)) [tree_of_lexp l; tree_of_lexp r]
-  | IfExp (t,b,v)            -> mktr "IfExp" [tree_of_lexp t; tree_of_lexp b; tree_of_option v]
+  | IfExp (t,b,v)            -> mktr "IfExp" [tree_of_lexp t; tree_of_lexp b; tree_of_option tree_of_lexp v]
   | WhileExp (t, b)           -> mktr "WhileExp" [tree_of_lexp t; tree_of_lexp b]
   | BreakExp                  -> mktr "BreakExp" []
   | ExpSeq seq                -> mktr "ExpSeq" (List.map tree_of_lexp seq)
@@ -77,3 +77,8 @@ and tree_of_lexp (_, x) = tree_of_exp x
 and tree_of_lvar (_, x) = tree_of_var x
 
 and tree_of_ldec (_, x) = tree_of_dec x
+
+and tree_of_option f opt =
+  match opt with
+  | None -> Tree.empty
+  | Some x -> f x
