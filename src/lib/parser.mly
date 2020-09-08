@@ -59,6 +59,9 @@ program:
 
 exp:
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fix identation
 | x=LITBOOL                                      {$loc, BoolExp x}
 | x=LITINT                                       {$loc, IntExp x}
 | x=LITREAL                                      {$loc, RealExp x}
@@ -77,6 +80,7 @@ exp:
 | l=exp LE r=exp                                 {$loc, BinaryExp (l, LowerEqual, r)}
 | l=exp AND r=exp                                {$loc, BinaryExp (l, And, r)}
 | l=exp OR r=exp                                 {$loc, BinaryExp (l, Or, r)}
+<<<<<<< HEAD
 | IF t=exp THEN b=exp option(ELSE) v=option(exp) {$loc, IfExp (t,b,v)}
 | WHILE t=exp DO b=exp                           {$loc, WhileExp (t, b)}
 | BREAK                                          {$loc, BreakExp}
@@ -126,3 +130,8 @@ optional_type:
 | WHILE t=exp DO b=exp                    {$loc, WhileExp (t, b)}
 | BREAK                                   {$loc, BreakExp}
 >>>>>>> if_then_else
+=======
+| IF t=exp THEN b=exp option(ELSE) v=option(exp) {$loc, IfExp (t,b,v)}
+| WHILE t=exp DO b=exp                           {$loc, WhileExp (t, b)}
+| BREAK                                          {$loc, BreakExp}
+>>>>>>> fix identation
