@@ -58,6 +58,7 @@ program:
 | e=exp EOF                               {e}
 
 exp:
+<<<<<<< HEAD
 | x=LITBOOL                                      {$loc, BoolExp x}
 | x=LITINT                                       {$loc, IntExp x}
 | x=LITREAL                                      {$loc, RealExp x}
@@ -102,3 +103,26 @@ dec:
 
 optional_type:
 | ot=option(COLON t=ID {t})               {ot}
+=======
+| x=LITBOOL                               {$loc, BoolExp x}
+| x=LITINT                                {$loc, IntExp x}
+| x=LITREAL                               {$loc, RealExp x}
+| MINUS e=exp             %prec UMINUS    {$loc, NegativeExp e}
+| l=exp PLUS r=exp                        {$loc, BinaryExp (l, Plus, r)}
+| l=exp MINUS r=exp                       {$loc, BinaryExp (l, Minus, r)}
+| l=exp TIMES r=exp                       {$loc, BinaryExp (l, Times, r)}
+| l=exp DIV r=exp                         {$loc, BinaryExp (l, Div, r)}
+| l=exp MOD r=exp                         {$loc, BinaryExp (l, Mod, r)}
+| l=exp POW r=exp                         {$loc, BinaryExp (l, Power, r)}
+| l=exp EQ r=exp                          {$loc, BinaryExp (l, Equal, r)}
+| l=exp NE r=exp                          {$loc, BinaryExp (l, NotEqual, r)}
+| l=exp GT r=exp                          {$loc, BinaryExp (l, GreaterThan, r)}
+| l=exp GE r=exp                          {$loc, BinaryExp (l, GreaterEqual, r)}
+| l=exp LT r=exp                          {$loc, BinaryExp (l, LowerThan, r)}
+| l=exp LE r=exp                          {$loc, BinaryExp (l, LowerEqual, r)}
+| l=exp AND r=exp                         {$loc, BinaryExp (l, And, r)}
+| l=exp OR r=exp                          {$loc, BinaryExp (l, Or, r)}
+| IF t=exp THEN b=exp option(ELSE) v=option(exp) {$loc, IfExp (t,b,v)}
+| WHILE t=exp DO b=exp                    {$loc, WhileExp (t, b)}
+| BREAK                                   {$loc, BreakExp}
+>>>>>>> if_then_else
