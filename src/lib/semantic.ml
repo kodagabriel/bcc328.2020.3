@@ -63,7 +63,25 @@ let rec check_exp env (pos, (exp, tref)) =
   | A.RealExp _ -> set tref T.REAL
   | A.StringExp _ -> set tref T.STRING
   | A.LetExp (decs, body) -> check_exp_let env pos tref decs body
+  | A.VarExp v -> check_var env pos tref v
+  | A.AssignExp (v, e) -> check_assign env pos tref v e
   | _ -> Error.fatal "unimplemented"
+
+  (* let var oi = 2 in oi := 3 *)
+  (* let var oi = 2 in oi := "string" *)
+  (* let var oi = 2 in errou := 3 *)
+and check_assign env pos tref v (p, e) = 
+  let texp = check_exp env (p, e) in
+  let tvar = check_var env pos tref v in 
+    compatible texp tvar pos;
+    VOID
+
+
+and check_var env pos tref (p, v) = 
+  match v with
+    | A.SimpleVar s -> varlook env.venv s pos
+    | _ -> Error.fatal "unimplemented"
+
 
 and check_exp_let env pos tref decs body =
   let env' = List.fold_left check_dec env decs in

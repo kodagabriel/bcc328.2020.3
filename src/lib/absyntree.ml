@@ -76,7 +76,8 @@ and tree_of_exp_basic exp =
   | CallExp (f, xs)           -> mktr "CallExp" [mktr (name f) []; mktr "Args" (List.map tree_of_lexp xs)]
   | VarExp x                  -> mktr "VarExp" [tree_of_lvar x]
   | LetExp (d, e)             -> mktr "LetExp" [mktr "Decs" (List.map tree_of_ldec d); tree_of_lexp e]
-
+  | AssignExp (l, r)          -> mktr "AssignExp" [tree_of_lvar l; tree_of_lexp r]
+  (*MUDEI LINHA ACIMA*)
 and tree_of_var var =
   match var with
   | SimpleVar x -> mktr (sprintf "SimpleVar %s" (Symbol.name x)) []
