@@ -78,9 +78,9 @@ and check_break_exp env pos tref=
 
 
 and check_while_exp env post tref cond exp = 
-  let env' = {env with inloop = true} in
-      ignore(check_exp env' cond); 
-      ignore(check_exp env' exp); 
+  let env_aux = {env with inloop = true} in
+      ignore(check_exp env_aux cond); 
+      ignore(check_exp env_aux exp); 
       set tref T.VOID
 
 
