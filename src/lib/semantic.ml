@@ -63,8 +63,81 @@ let rec check_exp env (pos, (exp, tref)) =
   | A.RealExp _ -> set tref T.REAL
   | A.StringExp _ -> set tref T.STRING
   | A.LetExp (decs, body) -> check_exp_let env pos tref decs body
+  | A.BinaryExp (lex, op, rex) -> check_binary_exp env pos tref lex op rex
+  | A.NegativeExp exp -> check_neg_exp env pos tref exp
+  | A.ExpSeq exp -> check_exp_seq_aux env pos tref exp
+  | A.IfExp (cond, exp, els) -> check_if_exp env pos tref cond exp els
+  | A.WhileExp (cond, exp) -> check_while_exp env pos tref cond exp
+  | A.BreakExp -> check_break_exp env pos tref
   | _ -> Error.fatal "unimplemented"
 
+and check_break_exp env pos tref= 
+    match env.inloop with 
+    | true -> set tref T.VOID 
+    | _ -> Error.error pos "Error: break not inside a while loop"
+
+
+and check_while_exp env post tref cond exp = 
+  let env' = {env with inloop = true} in
+      ignore(check_exp env' cond); 
+      ignore(check_exp env' exp); 
+      set tref T.VOID
+
+
+and check_if_exp env pos tref cond exp els =
+  let cond' = check_exp env cond in
+    match cond' with
+      | T.BOOL -> let exp' = check_exp env exp in
+        match els with 
+          | Some lexp -> let els' = check_exp env lexp in
+            compatible exp' els' pos ; 
+            set tref exp'
+          | None -> set tref T.VOID
+      | _ -> type_mismatch pos T.BOOL cond'
+
+and check_exp_seq_aux env pos tref exp = 
+    let t = check_exp_seq env pos tref exp in 
+        set tref t;
+
+and check_exp_seq env pos tref exp =
+match exp with
+  | []   -> T.VOID
+  | [e]  -> check_exp env e
+  | h::t -> ignore(check_exp env h); check_exp_seq env pos tref t 
+
+and check_neg_exp env pos tref exp = 
+  let v = check_exp env exp in 
+        match v with
+          | T.INT | T.REAL -> set tref v
+          | _ -> type_mismatch pos T.REAL v
+        
+
+and check_binary_exp env pos tref lex op rex = 
+  let ltype = check_exp env lex in 
+  let rtype = check_exp env rex in 
+  match op with
+  | A.Plus | A.Minus | A.Times | A.Div | A.Mod | A.Power ->
+    begin match ltype, rtype with
+      | T.INT, T.INT                                    -> set tref T.INT
+      | T.INT, T.REAL | T.REAL, T.INT | T.REAL, T.REAL  -> set tref T.REAL
+      | _                                               -> type_mismatch pos ltype rtype
+    end  
+  | A.Equal | A.NotEqual -> compatible ltype rtype pos; set tref T.BOOL
+  | A.GreaterThan | A.GreaterEqual | A.LowerThan | A.LowerEqual ->
+          begin match ltype with
+            | T.INT    -> (match rtype with T.INT    -> set tref T.BOOL | _ -> type_mismatch pos T.INT rtype)
+            | T.REAL   -> (match rtype with T.REAL   -> set tref T.BOOL | _ -> type_mismatch pos T.REAL rtype)
+            | T.STRING -> (match rtype with T.STRING -> set tref T.BOOL | _ -> type_mismatch pos T.STRING rtype)
+          end
+          
+   | A.And | A.Or ->
+          begin match ltype, rtype with
+            | T.BOOL, T.BOOL -> set tref T.BOOL
+            | _ -> (match ltype with | T.BOOL -> type_mismatch pos T.BOOL rtype | _ -> type_mismatch pos T.BOOL ltype)
+          end
+
+  | _ -> Error.fatal "unimplemented"
+      
 and check_exp_let env pos tref decs body =
   let env' = List.fold_left check_dec env decs in
   let tbody = check_exp env' body in
